@@ -50,14 +50,37 @@ public class View extends JPanel{
                     View.this.removeAll();
                     ArrayList<Integer> indexes = model.getVisibleImages();
                     for(Integer i : indexes){
+                        if(i >= imagePanelList.size()){
+                            ImagePanel imagePanel = new ImagePanel(model, i);
+                            imagePanelList.add(imagePanel);
+                        }
                         View.this.add(imagePanelList.get(i));
+
                         if (model.getCurLayout() == Layout.LISTLAYOUT) {
                             View.this.add(Box.createVerticalStrut(10));
                         }
                     }
+                    
                     View.this.validate();
                     View.this.repaint();
-                } else {
+                }else if(model.isFilterRemoved() && !model.isFilterSelected()){
+                    View.this.removeAll();
+                    for(int i = 0; i < model.getTotalImage(); i++){
+                        if(i >= imagePanelList.size()){
+                            ImagePanel imagePanel = new ImagePanel(model, i);
+                            imagePanelList.add(imagePanel);
+                        }
+                        View.this.add(imagePanelList.get(i));
+
+                        if (model.getCurLayout() == Layout.LISTLAYOUT) {
+                            View.this.add(Box.createVerticalStrut(10));
+                        }
+                    }
+
+                    View.this.validate();
+                    View.this.repaint();
+                }
+                else {
                     addImages();
                     View.this.validate();
                 }
@@ -72,6 +95,7 @@ public class View extends JPanel{
             @Override
             public void componentResized(ComponentEvent e) {
                 System.out.println("View width: " + View.this.getWidth() + "   View Height: " + View.this.getHeight());
+
 
             }
         });

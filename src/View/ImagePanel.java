@@ -1,6 +1,6 @@
 package View;
 
-import DataHelper.Rate;
+import DataHelper.Layout;
 import Model.Model;
 
 import javax.swing.*;
@@ -21,6 +21,7 @@ public class ImagePanel extends JPanel{
     private ImageIcon star_empty;
     private ImageIcon star_full;
     private ImageIcon image;
+    private ImageIcon realImage;
     private JLabel imageLabel;
     private JLabel imageName;
     private JLabel imageCreationDate;
@@ -35,8 +36,8 @@ public class ImagePanel extends JPanel{
     public ImagePanel(Model model, int index){
         this.model = model;
         this.index = index;
-        this.setPreferredSize(new Dimension(195,180));
-        this.setMaximumSize(new Dimension(195,180));
+//        this.setPreferredSize(new Dimension(195,180));
+//        this.setMaximumSize(new Dimension(195,180));
 
         imageRate = new ArrayList<>(5);
 
@@ -45,8 +46,8 @@ public class ImagePanel extends JPanel{
         star_full = new ImageIcon("pic/star_full.png");
         star_full = new ImageIcon(star_full.getImage().getScaledInstance(20,20,Image.SCALE_SMOOTH));
 
-        image = new ImageIcon(model.getImage(index));
-        image = new ImageIcon(image.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH));
+        realImage = new ImageIcon(model.getImage(index));
+        image = new ImageIcon(realImage.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH));
         imageLabel = new JLabel(image);
 
         String image_name = model.getImageName(index);
@@ -63,21 +64,11 @@ public class ImagePanel extends JPanel{
             imageRate.add(new JLabel(star_empty));
         }
 
-        initGridLayout();
-
-//        Box vbox = Box.createVerticalBox();
-//        Box hbox = Box.createHorizontalBox();
-//
-//        vbox.add(imageLabel);
-//        vbox.add(imageName);
-//        vbox.add(imageCreationDate);
-//        hbox.add(Box.createHorizontalGlue());
-//        for(JLabel label : imageRate){
-//            hbox.add(label);
-//        }
-//        hbox.add(Box.createHorizontalGlue());
-//        vbox.add(hbox);
-//        this.add(vbox);
+        if(model.getCurLayout() == Layout.GRIDLAYOUT) {
+            initGridLayout();
+        }else{
+            initListLayout();
+        }
 
 
 //        this.setBackground(new Color(50,50,50,64));
@@ -95,6 +86,9 @@ public class ImagePanel extends JPanel{
     }
 
     private void initGridLayout(){
+        this.setPreferredSize(new Dimension(195,180));
+        this.setMaximumSize(new Dimension(195,180));
+
         Box vbox = Box.createVerticalBox();
         Box hbox = Box.createHorizontalBox();
 
@@ -114,9 +108,55 @@ public class ImagePanel extends JPanel{
         hbox.setAlignmentX(Component.CENTER_ALIGNMENT);
         vbox.add(hbox);
         this.add(vbox);
+
     }
 
     private void initListLayout(){
+        this.setPreferredSize(new Dimension(500,150));
+        this.setMaximumSize(new Dimension(500,150));
+
+        Box hbox1 = Box.createHorizontalBox();
+        Box hbox2 = Box.createHorizontalBox();
+        Box vbox = Box.createVerticalBox();
+//        vbox.add(Box.createVerticalGlue());
+
+        hbox1.add(Box.createHorizontalStrut(30));
+//        hbox1.add(Box.createHorizontalGlue());
+
+        System.out.println(this.getSize().width);
+        hbox1.setPreferredSize(new Dimension(500,150));
+
+        Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+//        hbox1.setBorder(raisedetched);
+        imageLabel.setAlignmentY(CENTER_ALIGNMENT);
+        hbox1.add(imageLabel);
+
+        imageName.setAlignmentX(Component.LEFT_ALIGNMENT);
+        vbox.add(imageName);
+        vbox.add(Box.createVerticalStrut(10));
+
+
+        imageCreationDate.setAlignmentX(Component.LEFT_ALIGNMENT);
+//        vbox.setBorder(raisedetched);
+        vbox.add(imageCreationDate);
+        vbox.add(Box.createVerticalStrut(10));
+
+
+        for(JLabel label : imageRate){
+            hbox2.add(label);
+        }
+        hbox2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        vbox.add(hbox2);
+//        vbox.add(Box.createVerticalGlue());
+
+        hbox1.add(Box.createHorizontalGlue());
+        vbox.setAlignmentY(CENTER_ALIGNMENT);
+        hbox1.add(vbox);
+        hbox1.add(Box.createHorizontalGlue());
+
+        this.add(hbox1);
+
+//        hbox1.setAlignmentY(Component.TOP_ALIGNMENT);
 
     }
 
@@ -176,12 +216,40 @@ public class ImagePanel extends JPanel{
             });
         }
 
+        imageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JDialog dialog = new JDialog();
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setTitle("Image Loading Demo");
+
+                dialog.add(new JLabel(transformImage(500,500,realImage)));
+
+                dialog.pack();
+//                dialog.setLocationByPlatform(true);
+                System.out.println(imageLabel.getLocation().getX());
+                dialog.setLocation((int) MouseInfo.getPointerInfo().getLocation().getX(),
+                        (int) MouseInfo.getPointerInfo().getLocation().getY());
+//                dialog.setPreferredSize(new Dimension(400,400));
+                dialog.setSize(new Dimension(500,500));
+                dialog.setVisible(true);
+            }
+        });
 
     }
 
-//    @Override
-//    protected void paintComponent(Graphics g) {
-//        g.drawImage(image,0,0,null);
-//
-//    }
+    private ImageIcon transformImage(int width, int height, ImageIcon before){
+        if(before.getIconWidth() < width && before.getIconHeight() < height){
+            return before;
+        }else if(before.getIconWidth() > before.getIconHeight()){
+            double newHeight = (double)width/(double)before.getIconWidth()*(double)getHeight();
+            return new ImageIcon(before.getImage().getScaledInstance(width, (int) newHeight, Image.SCALE_SMOOTH));
+        }else{
+            double newWidth = (double)height/(double)before.getIconHeight()*(double)getWidth();
+            return new ImageIcon(before.getImage().getScaledInstance((int)newWidth, height, Image.SCALE_SMOOTH));
+        }
+    }
+
+
+
 }

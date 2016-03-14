@@ -25,6 +25,8 @@ public class Model {
     private Rate filterRate;
     private boolean filterSelected;
 
+    private boolean filterRemoved;
+
 
     public Model(){
         views = new ArrayList<IView>();
@@ -35,6 +37,7 @@ public class Model {
         changeLayout = false;
         filterRate = Rate.ZERO;
         filterSelected = false;
+        filterRemoved = false;
     }
 
     //region getter setter
@@ -95,8 +98,20 @@ public class Model {
         updateAllViews();
     }
 
-    public boolean isFilterSelected(){
+    public boolean isFilterSelected()
+    {
         return filterSelected;
+    }
+
+    public void removeFilter(){
+        filterSelected = false;
+        filterRemoved = true;
+        updateAllViews();
+        filterRemoved = false;
+    }
+
+    public boolean isFilterRemoved(){
+        return filterRemoved;
     }
 
     public ArrayList<Integer> getVisibleImages(){
@@ -113,7 +128,7 @@ public class Model {
 
     //endregion
 
-    public void loadImageModel(File[] files, String name, long date){
+    public void loadImageModel(File[] files){
         for(File file : files) {
             String test = file.getPath();
             Image imageModel = new Image(file.getPath(), file.getName(), Rate.ZERO, new Date(file.lastModified()));
