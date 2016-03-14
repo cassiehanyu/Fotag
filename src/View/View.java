@@ -3,11 +3,16 @@ package View;
 import DataHelper.Layout;
 import Model.Model;
 import Model.IView;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileCacheImageInputStream;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +33,9 @@ public class View extends JPanel{
         this.imagePanelList = new ArrayList<>();
 
         this.setPreferredSize(new Dimension(width,height));
-        this.setBackground(Color.black);
+//        this.setBackground(new Color(237,119,119));
+        this.setBackground(new Color(50,66,102));
+//        this.setOpaque(false);
 //        this.setLayout(new FlowLayout(FlowLayout.LEADING,10,10));
         initGridLayout();
 
@@ -63,11 +70,6 @@ public class View extends JPanel{
                         }
                     }
                     View.this.setPreferredSize(getViewPreferredSize(indexes.size()));
-//                    View.this.setSize(View.this.getPreferredSize());
-
-//                    View.this.revalidate();
-//                    View.this.invalidate();
-//                    View.this.invalidate();
                     imageDisplayed = indexes.size();
                     View.this.repaint();
                     View.this.updateUI();
@@ -107,12 +109,19 @@ public class View extends JPanel{
         registerListener();
     }
 
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//
+//    }
+
     private void registerListener(){
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 System.out.println("View width: " + View.this.getWidth() + "   View Height: " + View.this.getHeight());
                 View.this.setPreferredSize(getViewPreferredSize(View.this.imageDisplayed));
+//                View.this.setPreferredSize(getViewPreferredSize(View.this.imagePanelList.size()));
+
             }
         });
     }
@@ -158,8 +167,13 @@ public class View extends JPanel{
     }
 
     private Dimension getViewPreferredSize(int totalItem){
-        int width = this.width-10;
-        int height = this.height-10;
+        int width,height;
+        if(getParent()!=null){
+            width = getParent().getWidth()-10;
+        }else{
+            width = this.width;
+        }
+//        int height = getParent().getHeight()-10;
         int newWidth, newHeight;
         int panelWidth, panelHeight;
         double item;
@@ -170,9 +184,9 @@ public class View extends JPanel{
 
             item= (double)width/(double)panelWidth;
             itemInRow = (int) Math.floor(item);
-            if(item - itemInRow > 0.5){
-                itemInRow++;
-            }
+//            if(item - itemInRow > 0.5){
+//                itemInRow++;
+//            }
 
             newWidth = (itemInRow * panelWidth + 10);
             newWidth = (newWidth < this.width)? this.width : newWidth;
@@ -181,7 +195,7 @@ public class View extends JPanel{
             newHeight = (newHeight < this.height)? this.height : newHeight;
         }else{
             panelWidth = 500+10;
-            panelHeight = 150+10;
+            panelHeight = 180+10;
             newWidth = this.width;
             newHeight = panelHeight * totalItem + 10;
         }

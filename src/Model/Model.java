@@ -50,7 +50,8 @@ public class Model {
         return imageModelList.get(index).getFileName();
     }
 
-    public String getImageCreationDate(int index){
+    public String getImageCreationDate(int index)
+    {
         return imageModelList.get(index).getCreationDate();
     }
 
@@ -66,7 +67,9 @@ public class Model {
 
     public void setRating(int index, int rate){
         imageModelList.get(index).setRate(Rate.fromInt(rate));
-//        updateAllViews();
+        if(filterSelected) {
+            updateAllViews();
+        }
     }
 
     public Layout getCurLayout(){
@@ -116,9 +119,17 @@ public class Model {
 
     public ArrayList<Integer> getVisibleImages(){
         ArrayList<Integer> indexes = new ArrayList<>();
-        for(int i = 0; i < imageModelList.size(); i++){
-            if(imageModelList.get(i).getRate() == filterRate.getRate()){
-                indexes.add(i);
+        if(filterRate == Rate.ZERO){
+            for (int i = 0; i < imageModelList.size(); i++) {
+                if (imageModelList.get(i).getRate() == filterRate.getRate()) {
+                    indexes.add(i);
+                }
+            }
+        }else {
+            for (int i = 0; i < imageModelList.size(); i++) {
+                if (imageModelList.get(i).getRate() >= filterRate.getRate()) {
+                    indexes.add(i);
+                }
             }
         }
         return indexes;
@@ -166,7 +177,9 @@ public class Model {
             if(file.exists()) {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
+//                if(ois.available() > 0) {
                 imageModelList = (ArrayList<Image>) ois.readObject();
+//                }
                 ois.close();
                 for(Image imageModel : imageModelList){
                     loadImage(new File(imageModel.getFilePath()));

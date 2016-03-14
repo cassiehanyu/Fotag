@@ -4,7 +4,6 @@ import Model.Model;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -25,11 +24,14 @@ public class MyToolBar extends JToolBar{
 
     private JLabel crossLabel;
     private JLabel notRanked;
+    private JLabel filter;
     private ArrayList<JLabel> rateFilter;
 
     public MyToolBar(Model model){
         this.model = model;
         rateFilter= new ArrayList<>(5);
+        this.setBackground(new Color(205,189,153));
+
 
         star_empty = new ImageIcon("pic/star_empty.png");
         star_empty = new ImageIcon(star_empty.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH));
@@ -46,15 +48,19 @@ public class MyToolBar extends JToolBar{
         loadImage = new ImageIcon("pic/load.png");
         loadImage = new ImageIcon(loadImage.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH));
         loadButton = new JButton(loadImage);
+        loadButton.setOpaque(false);
+//        loadButton.setBackground(new Color(237,119,119,30));
 
         gridImage = new ImageIcon("pic/grid.png");
         gridImage = new ImageIcon(gridImage.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH));
         gridButton = new JToggleButton(gridImage);
         gridButton.setSelected(true);
+//        gridButton.setBackground(new Color(237,119,119,30));
 
         listImage = new ImageIcon("pic/list.png");
         listImage = new ImageIcon(listImage.getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH));
         listButton = new JToggleButton(listImage);
+//        listButton.setBackground(new Color(237,119,119,30));
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(gridButton);
@@ -71,6 +77,9 @@ public class MyToolBar extends JToolBar{
         this.add(listButton);
 
         this.add(Box.createHorizontalGlue());
+
+        filter = new JLabel("Filter By: ");
+        this.add(filter);
 
         notRanked = new JLabel(not_ranked);
 //        notRanked.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -105,16 +114,16 @@ public class MyToolBar extends JToolBar{
         loadButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                JFileChooser chooser = new JFileChooser();
-//                chooser.setCurrentDirectory(new File("./doc"));
-//                chooser.setMultiSelectionEnabled(true);
-//                int retrival = chooser.showOpenDialog(null);
-//                if(retrival == JFileChooser.APPROVE_OPTION) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(new File("./pic"));
+                chooser.setMultiSelectionEnabled(true);
+                int retrival = chooser.showOpenDialog(null);
+                if(retrival == JFileChooser.APPROVE_OPTION) {
                     System.out.println("loading picture");
-                    File[] file = new File[]{new File("pic/star_gold.png")};
-//                    File[] file = chooser.getSelectedFiles();
+//                    File[] file = new File[]{new File("pic/song2.jpg")};
+                    File[] file = chooser.getSelectedFiles();
                     model.loadImageModel(file);
-//                }
+                }
             }
         });
 

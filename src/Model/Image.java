@@ -4,6 +4,7 @@ import DataHelper.Rate;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -30,8 +31,10 @@ public class Image implements Serializable{
         return fileName;
     }
 
-    public String getCreationDate(){
-        return creationDate.toString();
+    public String getCreationDate()
+    {
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(creationDate);
+        return formattedDate;
     }
 
     public int getRate(){
